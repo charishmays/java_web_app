@@ -1,0 +1,66 @@
+
+/*set default variables, to override the default folder settings */
+
+ext{
+	
+	webDir = "WebContent" //default is  src/main/webapp
+	javaSrcFolders = "src" //default is src/main/java
+	resourceFolders_dev = ["config", "config_dev"] //default is src/main/resources
+ 	resourceFolders_prod = ["config", "config_production"] 
+
+}
+
+
+
+// Apply the java-library plugin to add support for Java Library
+apply plugin: 'java-library'
+
+/* include "java" plugin  $ */
+apply plugin: 'java' 
+ 
+/* include "war" plugin, so you can call "war" task */
+apply plugin:'war'
+
+/* override the webApp location */
+webAppDirName = webDir
+
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+}
+
+/*Set the default settings : for staging */
+sourceSets{
+			main{
+				java{
+					srcDirs javaSrcFolders
+				}
+				resources{
+					srcDirs resourceFolders_dev
+				}
+			}
+		}
+
+//customized task : to override the original setting of sourceSets, must call it before calling "war"
+task prodSet{
+
+	doLast{
+		sourceSets{
+			main{
+				java{
+					srcDirs  javaSrcFolders
+				}
+				resources{
+					srcDirs resourceFolders_prod
+				}
+			}
+		}
+	}
+
+}
+
